@@ -7,7 +7,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=game
       - POSTGRES_USER=game
-      - POSTGRES_DB=game1
+      - POSTGRES_DB=game3
     volumes:
       - sample_db:/var/lib/postgresql/data
 
