@@ -5,8 +5,8 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_PASSWORD=sample
-      - POSTGRES_USER=sample
+      - POSTGRES_PASSWORD=game
+      - POSTGRES_USER=game
       - POSTGRES_DB=game
     volumes:
       - sample_db:/var/lib/postgresql/data
