@@ -31,15 +31,15 @@ public class User {
     @Column(name = "level")
     private int level;
 
-    @Column(name = "rank")
-    private int rank;
-
-    @Column(name = "tournament_score")
-    private Long tournamentScore;
-
-    @Type(type= "org.hibernate.type.NumericBooleanType")
-    @Column(name = "is_reward_claimed", nullable = false)
-    private boolean isRewardClaimed = false;
+//    @Column(name = "rank")
+//    private int rank;
+//
+//    @Column(name = "tournament_score")
+//    private Long tournamentScore;
+//
+//    @Type(type= "org.hibernate.type.NumericBooleanType")
+//    @Column(name = "is_reward_claimed", nullable = false)
+//    private boolean isRewardClaimed = false;
 
     public int incrementLevel() {
         return ++this.level;

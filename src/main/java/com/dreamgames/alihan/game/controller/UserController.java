@@ -1,6 +1,7 @@
 package com.dreamgames.alihan.game.controller;
 
 import com.dreamgames.alihan.game.entity.User;
+import com.dreamgames.alihan.game.job.producer.Producer;
 import com.dreamgames.alihan.game.model.CreateUserRequest;
 import com.dreamgames.alihan.game.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,9 +20,11 @@ public class UserController {
 
     private final UserService userService;
 
+    private final Producer producer;
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, Producer producer) {
         this.userService = userService;
+        this.producer = producer;
     }
 
 
@@ -29,6 +32,7 @@ public class UserController {
     @PostMapping(path = "/create")
     public ResponseEntity<User> createUser(@RequestBody @Valid CreateUserRequest createUserRequest) {
         log.info("createUser is called with: {}", createUserRequest);
+        this.producer.publishMessage("selam");
         return new ResponseEntity<>(userService.createUser(createUserRequest), HttpStatus.CREATED);
     }
 

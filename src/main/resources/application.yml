@@ -4,6 +4,7 @@ spring:
     username: user
     url: jdbc:mysql://localhost:3306/db
     password: password
+
   jpa:
     show-sql: true
     hibernate:
@@ -14,3 +15,15 @@ spring:
         format_sql: true
 
 
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: group_id
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+    producer:
+      bootstrap-servers: localhost:9092
+      key-deserializer: org.apache.kafka.common.serialization.StringSerializer
+      value-deserializer: org.apache.kafka.common.serialization.StringSerializer

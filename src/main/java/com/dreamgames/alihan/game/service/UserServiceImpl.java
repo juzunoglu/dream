@@ -24,7 +24,6 @@ public class UserServiceImpl implements UserService {
                 .level(1)
                 .coin(5_000L)
                 .build();
-
         return userDao.save(userToBeSaved);
     }
 
@@ -32,7 +31,6 @@ public class UserServiceImpl implements UserService {
     public User updateUserLevel(Long updateLevelRequest) {
         User userToBeUpdated = userDao.findById(updateLevelRequest)
                 .orElseThrow(() -> new UserNotFoundException("User is not found"));
-
         userToBeUpdated.setCoin(userToBeUpdated.addCoin(25L));
         userToBeUpdated.setLevel(userToBeUpdated.incrementLevel());
         return userDao.save(userToBeUpdated);
