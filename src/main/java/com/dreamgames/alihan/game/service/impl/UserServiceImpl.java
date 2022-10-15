@@ -1,9 +1,10 @@
-package com.dreamgames.alihan.game.service;
+package com.dreamgames.alihan.game.service.impl;
 
 import com.dreamgames.alihan.game.entity.User;
 import com.dreamgames.alihan.game.exception.UserNotFoundException;
 import com.dreamgames.alihan.game.model.CreateUserRequest;
 import com.dreamgames.alihan.game.repository.UserDao;
+import com.dreamgames.alihan.game.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
