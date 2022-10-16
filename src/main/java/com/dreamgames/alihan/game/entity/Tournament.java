@@ -30,6 +30,7 @@ public class Tournament {
     private int maxParticipantNumber;
 
     @Column(name = "participants")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "tournament")
     private List<User> participants = new ArrayList<>();
 
     @OneToOne

@@ -15,46 +15,55 @@ services:
     volumes:
       - my-db:/var/lib/mysql
 
-  zookeeper:
-    image: 'bitnami/zookeeper:latest'
-    container_name: "zookeper"
-    ports:
-      - "2181:2181"
-    volumes:
-      - "zookeeper_data:/bitnami"
+  activeMq:
+    image: vromero/activemq-artemis:latest
     environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
+      - ARTEMIS_USERNAME=artemis
+      - ARTEMIS_PASSWORD=artemis
+    ports:
+      - "8161:8161"
+      - "61616:61616"
 
-  kafka:
-    image: 'bitnami/kafka:latest'
-    container_name: "kafka"
-    ports:
-      - "9092:9092"
-    volumes:
-      - "kafka_data:/bitnami"
-    environment:
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
-    depends_on:
-      - zookeeper
-
-  kafka-ui:
-    image: provectuslabs/kafka-ui
-    container_name: kafka-ui
-    ports:
-      - "9090:8080"
-    restart: always
-    environment:
-      - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
-      - KAFKA_CLUSTERS_0_ZOOKEEPER=localhost:2181
+#  zookeeper:
+#    image: 'bitnami/zookeeper:latest'
+#    container_name: "zookeper"
+#    ports:
+#      - "2181:2181"
+#    volumes:
+#      - "zookeeper_data:/bitnami"
+#    environment:
+#      - ALLOW_ANONYMOUS_LOGIN=yes
+#
+#  kafka:
+#    image: 'bitnami/kafka:latest'
+#    container_name: "kafka"
+#    ports:
+#      - "9092:9092"
+#    volumes:
+#      - "kafka_data:/bitnami"
+#    environment:
+#      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+#      - ALLOW_PLAINTEXT_LISTENER=yes
+#      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+#      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+#      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
+#    depends_on:
+#      - zookeeper
+#
+#  kafka-ui:
+#    image: provectuslabs/kafka-ui
+#    container_name: kafka-ui
+#    ports:
+#      - "9090:8080"
+#    restart: always
+#    environment:
+#      - KAFKA_CLUSTERS_0_NAME=local
+#      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+#      - KAFKA_CLUSTERS_0_ZOOKEEPER=localhost:2181
 
 volumes:
   my-db:
-  zookeeper_data:
-    driver: local
-  kafka_data:
-    driver: local
+#  zookeeper_data:
+#    driver: local
+#  kafka_data:
+#    driver: local

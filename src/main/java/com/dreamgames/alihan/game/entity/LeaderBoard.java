@@ -18,4 +18,9 @@ public class LeaderBoard  {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
+
+    @OneToOne
+    @JoinColumn(name = "tournament_id")
+    private Tournament tournament;
+
 }
