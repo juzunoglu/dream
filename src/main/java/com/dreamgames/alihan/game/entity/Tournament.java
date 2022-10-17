@@ -33,7 +33,7 @@ public class Tournament {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "tournament")
     private List<User> participants = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "leader_board_id")
     private LeaderBoard leaderBoard;
 
