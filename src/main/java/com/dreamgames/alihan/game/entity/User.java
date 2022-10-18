@@ -32,10 +32,13 @@ public class User {
     private int level;
 
     @Column(name = "rank")
-    private int rank;
+    private Double rank;
 
     @Column(name = "tournament_score")
     private Long tournamentScore;
+
+    @Column(name= "group_id")
+    private Long groupId;
 
     @Type(type= "org.hibernate.type.NumericBooleanType")
     @Column(name = "is_reward_claimed", nullable = false)
@@ -44,6 +47,10 @@ public class User {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tournament_id")
     private Tournament tournament;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "leader_board_id")
+    private LeaderBoard leaderBoard;
 
     public int incrementLevel() {
         return ++this.level;

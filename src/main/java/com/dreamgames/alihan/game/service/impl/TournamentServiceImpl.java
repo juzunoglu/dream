@@ -30,12 +30,16 @@ public class TournamentServiceImpl implements TournamentService {
     public void startTournament() {
         Tournament newTournament = Tournament.builder()
                 .name("Tournament")
-                .maxParticipantNumber(100)
                 .state(STARTED)
                 .build();
 
         log.info("The time is now {}", dateFormat.format(new Date()));
 //        tournamentDao.save(newTournament);
 //        log.info("Tournament has now started: {}", newTournament);
+    }
+
+    @Override
+    public Tournament getCurrentTournament() {
+        return tournamentDao.getCurrentTournament();
     }
 }

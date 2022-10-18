@@ -26,9 +26,6 @@ public class Tournament {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "max_participant_number")
-    private int maxParticipantNumber;
-
     @Column(name = "participants")
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "tournament")
     private List<User> participants = new ArrayList<>();
