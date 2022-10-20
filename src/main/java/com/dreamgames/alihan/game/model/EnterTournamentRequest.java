@@ -1,6 +1,5 @@
 package com.dreamgames.alihan.game.model;
 
-import com.dreamgames.alihan.game.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -8,7 +7,12 @@ import lombok.Data;
 public class EnterTournamentRequest {
 
     @Schema(description = "User that will enter to the tournament",
-            name = "user",
+            name = "userId",
             required = true)
-    private User user;
+    private Long userId;
+
+    @Schema(description = "Tournament id to be entered",
+            name = "tournamentId",
+            required = true)
+    private Long tournamentId;
 }

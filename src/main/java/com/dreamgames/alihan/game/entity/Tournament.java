@@ -30,12 +30,19 @@ public class Tournament {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "tournament")
     private List<User> participants = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "leader_board_id")
-    private LeaderBoard leaderBoard;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "state")
     private TournamentState state;
+
+    public void addUser(User user) {
+        participants.add(user);
+        user.setTournament(this);
+    }
+
+    public void removeUser(User user) {
+        participants.remove(user);
+        user.setTournament(null);
+    }
 
 }

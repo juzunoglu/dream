@@ -54,7 +54,7 @@ public class GlobalControllerExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleGenericException(RuntimeException exception) {
         Map<String, String> errorMap = new HashMap<>();
-        errorMap.put("Exception is asda: ", exception.getCause().toString());
+        errorMap.put("Exception is asda: ", exception.getMessage());
         return errorMap;
     }
 

@@ -1,6 +1,7 @@
 package com.dreamgames.alihan.game.entity;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.Type;
@@ -14,12 +15,13 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "dream_user")
 @Builder
+@Table(name = "dream_user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
+    @Schema(hidden = true)
     private Long id;
 
     @Column(name = "name", unique = true, nullable = false)
@@ -31,26 +33,32 @@ public class User {
     @Column(name = "level")
     private int level;
 
+
     @Column(name = "rank")
+    @Schema(hidden = true)
     private Double rank;
 
     @Column(name = "tournament_score")
+    @Schema(hidden = true)
     private Long tournamentScore;
 
-    @Column(name= "group_id")
-    private Long groupId;
-
-    @Type(type= "org.hibernate.type.NumericBooleanType")
+    @Type(type = "org.hibernate.type.NumericBooleanType")
     @Column(name = "is_reward_claimed", nullable = false)
-    private boolean isRewardClaimed = false;
+    @Schema(hidden = true)
+    private boolean isRewardClaimed;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id")
+    @Schema(hidden = true)
+    @ToString.Exclude
+    private Team team;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tournament_id")
+    @Schema(hidden = true)
+    @ToString.Exclude
     private Tournament tournament;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "leader_board_id")
-    private LeaderBoard leaderBoard;
 
     public int incrementLevel() {
         return ++this.level;

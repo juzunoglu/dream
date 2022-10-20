@@ -8,4 +8,6 @@ public interface UserService {
     User createUser(CreateUserRequest createUserRequest);
 
     User updateUserLevel(Long updateLevelRequest);
+
+    User findUserById(Long userId);
 }

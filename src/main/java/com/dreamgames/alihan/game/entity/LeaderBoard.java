@@ -1,9 +1,9 @@
 package com.dreamgames.alihan.game.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Getter
@@ -19,13 +19,12 @@ public class LeaderBoard  {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "related_users")
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "leaderBoard")
-    @ToString.Exclude
-    private List<User> userList;
-
     private Long position;
 
     private Double score;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "leaderBoard")
+    private Team team;
 
 }

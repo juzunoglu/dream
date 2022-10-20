@@ -7,10 +7,15 @@ import com.dreamgames.alihan.game.repository.UserDao;
 import com.dreamgames.alihan.game.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
+
     @Autowired
     public UserServiceImpl(UserDao userDao) {
         this.userDao = userDao;
@@ -33,5 +38,11 @@ public class UserServiceImpl implements UserService {
         userToBeUpdated.setCoin(userToBeUpdated.addCoin(25L));
         userToBeUpdated.setLevel(userToBeUpdated.incrementLevel());
         return userDao.save(userToBeUpdated);
+    }
+
+    @Override
+    public User findUserById(Long userId) {
+        return userDao.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User is not found"));
     }
 }
