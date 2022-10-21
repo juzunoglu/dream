@@ -23,7 +23,6 @@ public class WebSocketController {
         this.webSocketService = webSocketService;
     }
 
-
     @MessageMapping("/message/{toUser}")
     public Boolean sendMessage(
             Principal principal,

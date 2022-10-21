@@ -1,6 +1,7 @@
 package com.dreamgames.alihan.game.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -28,10 +29,10 @@ public class User {
     private String name;
 
     @Column(name = "coin")
-    private Long coin;
+    private Long coin = 5_000L;
 
     @Column(name = "level")
-    private int level;
+    private int level = 0;
 
 
     @Column(name = "rank")
@@ -40,32 +41,40 @@ public class User {
 
     @Column(name = "tournament_score")
     @Schema(hidden = true)
+    @JsonIgnore
     private Long tournamentScore;
 
     @Type(type = "org.hibernate.type.NumericBooleanType")
     @Column(name = "is_reward_claimed", nullable = false)
     @Schema(hidden = true)
+    @JsonIgnore
     private boolean isRewardClaimed;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "group_id")
     @Schema(hidden = true)
     @ToString.Exclude
-    private Team team;
+    @JsonIgnore
+    private TournamentGroup tournamentGroup;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tournament_id")
     @Schema(hidden = true)
     @ToString.Exclude
+    @JsonIgnore
     private Tournament tournament;
 
 
-    public int incrementLevel() {
-        return ++this.level;
+    public void incrementLevel() {
+        this.setLevel(++this.level);
     }
 
-    public Long addCoin(Long coin) {
-        return this.coin + coin;
+    public void addCoin(Long coin) {
+        this.setCoin(this.coin + coin);
+    }
+
+    public void payTournamentFee(Long coin) {
+         this.setCoin(this.coin - coin);
     }
 
 

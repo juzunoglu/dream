@@ -4,7 +4,6 @@ import com.dreamgames.alihan.game.entity.User;
 import com.dreamgames.alihan.game.model.CreateUserRequest;
 import com.dreamgames.alihan.game.service.UserService;
 import com.dreamgames.alihan.game.websocket.WebSocketService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +32,11 @@ public class UserController {
     @PostMapping(path = "/create")
     public ResponseEntity<User> createUser(@RequestBody @Valid CreateUserRequest createUserRequest) {
         log.info("createUser is called with: {}", createUserRequest);
-        try {
-            webSocketService.notifyUser("toUser", "user is created");
-        } catch (JsonProcessingException exception) {
-            log.error("Exception occurred while...", exception);
-        }
+//        try {
+//            webSocketService.notifyUser("toUser", "user is created"); // TODO(what to do with this?)
+//        } catch (JsonProcessingException exception) {
+//            log.error("Exception occurred while...", exception);
+//        }
         return new ResponseEntity<>(userService.createUser(createUserRequest), HttpStatus.CREATED);
     }
 

@@ -19,6 +19,11 @@ spring:
     host: localhost
     port: 6379
 
+  task:
+    execution:
+      pool:
+        size: 10
+
 broker:
   host: localhost
   port: 61616

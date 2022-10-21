@@ -1,5 +1,7 @@
 package com.dreamgames.alihan.game.advise;
 
+import com.dreamgames.alihan.game.exception.InsufficientCoinException;
+import com.dreamgames.alihan.game.exception.InsufficientLevelException;
 import com.dreamgames.alihan.game.exception.UserNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -24,7 +26,17 @@ public class GlobalControllerExceptionHandler {
         exception.getBindingResult().getFieldErrors().forEach(error -> errorMap.put(error.getField(), error.getDefaultMessage()));
         return errorMap;
     }
+    @ExceptionHandler(value = InsufficientCoinException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleInsufficientCoinException(InsufficientCoinException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+    }
 
+    @ExceptionHandler(value = InsufficientLevelException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleInsufficientLevelException(InsufficientLevelException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+    }
     @ExceptionHandler(value = ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleEntryException(ConstraintViolationException exception) {
@@ -54,7 +66,7 @@ public class GlobalControllerExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleGenericException(RuntimeException exception) {
         Map<String, String> errorMap = new HashMap<>();
-        errorMap.put("Exception is asda: ", exception.getMessage());
+        errorMap.put("Exception is: ", exception.getMessage());
         return errorMap;
     }
 

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,8 @@ public class WebSocketService {
 
     @Autowired
     private final SimpMessagingTemplate messagingTemplate;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     public WebSocketService(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
@@ -28,7 +31,13 @@ public class WebSocketService {
                         .build()
         );
         messagingTemplate.convertAndSendToUser(userId, "/topic/messages", json);
-//        messagingTemplate.convertAndSend(); ??
+    }
+
+    public void publish(String message) { // todo
+        redisTemplate.convertAndSend("/topic/messages", message);
+    }
+    public void publish2(String message) { //todo
+        messagingTemplate.convertAndSend("/topic/messages", message);
     }
 
     @Data

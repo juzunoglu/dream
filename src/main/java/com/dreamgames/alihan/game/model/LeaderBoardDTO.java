@@ -1,4 +1,11 @@
 package com.dreamgames.alihan.game.model;
 
-public class LeaderBoardDTO {
+import lombok.Builder;
+
+@Builder
+public record LeaderBoardDTO(
+        Long userId,
+        String username,
+        double tournamentScore,
+        long position) {
 }

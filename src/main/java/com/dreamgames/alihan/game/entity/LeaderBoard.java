@@ -11,20 +11,20 @@ import javax.persistence.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "leader_board")
+@Table(name = "leaderboard")
 public class LeaderBoard  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
+    @JsonIgnore
     private Long id;
 
     private Long position;
 
     private Double score;
 
-    @JsonIgnore
     @OneToOne(mappedBy = "leaderBoard")
-    private Team team;
+    private TournamentGroup tournamentGroup;
 
 }

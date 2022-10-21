@@ -10,4 +10,7 @@ public interface UserService {
     User updateUserLevel(Long updateLevelRequest);
 
     User findUserById(Long userId);
+
+    User payTournamentFee(User user, Long tournamentFee);
+
 }

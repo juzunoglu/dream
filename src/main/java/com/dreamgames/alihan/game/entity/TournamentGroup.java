@@ -15,17 +15,26 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "team")
-public class Team {
+@Table(name = "tournament_group")
+public class TournamentGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
+    @JsonIgnore
     private Long id;
 
+    @Column(name = "name", nullable = false)
+    @JsonIgnore
+    private String name;
+
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "level", updatable = false, nullable = false)
+    @JsonIgnore
+    private int level;
 
     @Column(name = "team_participant")
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "team")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tournamentGroup")
     @ToString.Exclude
     private List<User> teamParticipant = new ArrayList<>();
 
@@ -36,11 +45,11 @@ public class Team {
 
     public void addUser(User user) {
         teamParticipant.add(user);
-        user.setTeam(this);
+        user.setTournamentGroup(this);
     }
 
     public void removeUser(User user) {
         teamParticipant.remove(user);
-        user.setTeam(null);
+        user.setTournamentGroup(null);
     }
 }

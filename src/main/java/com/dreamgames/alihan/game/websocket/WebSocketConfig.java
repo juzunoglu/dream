@@ -47,6 +47,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry registry) {
 //        registry.enableSimpleBroker("/queue", "/topic"); -> CREATES LOCAL BROKER
 
+        // TODO(change the prefixes?)
         registry.enableStompBrokerRelay("/queue", "/topic") // -> WORKS WITH EXTERNAL MESSAGE BROKER
                 .setRelayHost(brokerHost)
                 .setRelayPort(brokerPort)

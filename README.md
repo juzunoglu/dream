@@ -14,3 +14,5 @@ I needed an external message broker for the websocket implementations
 to work with across all the instance nodes.
 
 # Sources used to present this demo
+https://betterprogramming.pub/building-a-websocket-server-in-a-microservice-architecture-50c6c6432e2b
+
