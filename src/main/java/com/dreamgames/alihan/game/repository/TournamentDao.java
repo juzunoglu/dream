@@ -15,6 +15,6 @@ public interface TournamentDao extends JpaRepository<Tournament, Long> {
     Optional<Tournament> getCurrentTournament();
 
     @Query(value = "SELECT * FROM tournament t where t.state = 'STARTED' and t.id = :id", nativeQuery = true)
-    Tournament getTournamentById(@Param("id") Long id);
+    Optional<Tournament> getTournamentById(@Param("id") Long id);
 
 }

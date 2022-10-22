@@ -2,6 +2,7 @@ package com.dreamgames.alihan.game.advise;
 
 import com.dreamgames.alihan.game.exception.InsufficientCoinException;
 import com.dreamgames.alihan.game.exception.InsufficientLevelException;
+import com.dreamgames.alihan.game.exception.TournamentNotFound;
 import com.dreamgames.alihan.game.exception.UserNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -73,6 +74,12 @@ public class GlobalControllerExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ResponseEntity<String> handleUserNotFound(UserNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(TournamentNotFound.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public ResponseEntity<String> handleTournamentNotFound(TournamentNotFound ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 }

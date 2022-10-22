@@ -23,4 +23,6 @@ public interface TournamentService {
     List<LeaderBoardDTO> enterTournament(EnterTournamentRequest enterTournamentRequest);
 
     List<LeaderBoardDTO> getGlobalLeaderBoard();
+
+    List<LeaderBoardDTO> getGroupLeaderBoard(String groupName);
 }

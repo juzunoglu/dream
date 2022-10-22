@@ -2,6 +2,7 @@ package com.dreamgames.alihan.game.entity;
 
 
 import com.dreamgames.alihan.game.entity.enumaration.TournamentState;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -32,6 +33,10 @@ public class Tournament {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "tournament")
     private List<User> participants = new ArrayList<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "tournament")
+    private List<Reward> rewardList = new ArrayList<>();
+
 
     @Enumerated(EnumType.STRING)
     @Column(name = "state")
@@ -46,8 +51,13 @@ public class Tournament {
         user.setTournament(this);
     }
 
+    public void addRewards(Reward reward) {
+        rewardList.add(reward);
+        reward.setTournament(this);
+    }
+
     public void removeUser(User user) {
-        participants.remove(user);
+        participants.clear();
         user.setTournament(null);
     }
 

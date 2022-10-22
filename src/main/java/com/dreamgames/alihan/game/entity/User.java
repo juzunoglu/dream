@@ -8,6 +8,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -28,6 +29,10 @@ public class User {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<Reward> rewardList;
+
     @Column(name = "coin")
     private Long coin = 5_000L;
 
@@ -38,12 +43,6 @@ public class User {
     @Schema(hidden = true)
     @JsonIgnore
     private Long tournamentScore = 0L;
-
-    @Type(type = "org.hibernate.type.NumericBooleanType")
-    @Column(name = "is_reward_claimed", nullable = false)
-    @Schema(hidden = true)
-    @JsonIgnore
-    private boolean isRewardClaimed;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "group_id")

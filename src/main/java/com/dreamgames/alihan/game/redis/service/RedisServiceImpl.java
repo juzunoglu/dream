@@ -1,7 +1,9 @@
 package com.dreamgames.alihan.game.redis.service;
 
 import com.dreamgames.alihan.game.entity.User;
+import com.dreamgames.alihan.game.exception.UserNotFoundException;
 import com.dreamgames.alihan.game.model.LeaderBoardDTO;
+import com.dreamgames.alihan.game.repository.UserDao;
 import com.dreamgames.alihan.game.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,7 @@ public class RedisServiceImpl implements RedisService {
     private Jedis jedis;
 
     @Autowired
-    private UserService userService;
+    private UserDao userDao;
 
     @Override
     public void save(User user) {
@@ -55,9 +57,10 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public void updateUserScore(Long userId) {
+    public void updateUserScore(Long userId) { //todo remove userDao? unncessary dependency?
         User userFromRedis = getUserFromHashSet(userId.toString());
-        User user = userService.findUserById(userId);
+        User user = userDao.findById(userId)
+                        .orElseThrow(() -> new UserNotFoundException("User is not found"));
         jedis.zincrby(user.getTournamentGroup().getName(), 1D, userFromRedis.getId().toString());
         jedis.zincrby(globalLeaderboard, 1D, userFromRedis.getId().toString());
     }
@@ -70,10 +73,9 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public List<LeaderBoardDTO> getGroupLeaderBoard(String userId) {
+    public List<LeaderBoardDTO> getGroupLeaderBoard(String groupName) {
         List<LeaderBoardDTO> groupLeaderBoard = new ArrayList<>();
-        User user = userService.findUserById(Long.parseLong(userId));
-        Set<Tuple> tupleList = jedis.zrevrangeWithScores(user.getTournamentGroup().getName(), 0, 20);
+        Set<Tuple> tupleList = jedis.zrevrangeWithScores(groupName, 0, 20);
         long position = 0;
         for (Tuple tuple : tupleList) {
             position++;
@@ -86,6 +88,18 @@ public class RedisServiceImpl implements RedisService {
             groupLeaderBoard.add(leaderBoardDTO);
         }
         return groupLeaderBoard;
+    }
+
+    @Override
+    public Long getUserRank(String groupName, Long userId) {
+        User user = getUserFromHashSet(userId.toString());
+        // zrevrank retrieves the user position at the sorted set
+        Long rank = jedis.zrevrank(groupName, userId.toString());
+        // Adding one to the position because it starts at 0
+        if (rank != null) {
+            rank = rank + 1; //rank starts at 0
+        }
+        return rank;
     }
 
     @Override

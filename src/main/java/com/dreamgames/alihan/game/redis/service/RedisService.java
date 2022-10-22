@@ -10,7 +10,9 @@ public interface RedisService {
 
     void updateUserScore(Long userId);
 
-    List<LeaderBoardDTO> getGroupLeaderBoard(String groupId);
+    List<LeaderBoardDTO> getGroupLeaderBoard(String groupName);
+
+    Long getUserRank(String groupName, Long userId);
 
     List<LeaderBoardDTO> getGlobalLeaderBoard();
 }

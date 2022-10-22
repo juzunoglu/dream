@@ -1,17 +1,22 @@
 package com.dreamgames.alihan.game.service.impl;
 
+import com.dreamgames.alihan.game.entity.Reward;
 import com.dreamgames.alihan.game.entity.User;
 import com.dreamgames.alihan.game.entity.enumaration.GroupLevelMapping;
 import com.dreamgames.alihan.game.exception.UserNotFoundException;
 import com.dreamgames.alihan.game.model.CreateUserRequest;
 import com.dreamgames.alihan.game.redis.service.RedisService;
+import com.dreamgames.alihan.game.repository.RewardDao;
 import com.dreamgames.alihan.game.repository.TournamentDao;
 import com.dreamgames.alihan.game.repository.UserDao;
 import com.dreamgames.alihan.game.service.TournamentGroupService;
 import com.dreamgames.alihan.game.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import javax.transaction.Transactional;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -20,7 +25,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserDao userDao;
-
+    @Autowired
+    private RedisService redisService;
     @Autowired
     private TournamentGroupService tournamentGroupService;
 
@@ -28,11 +34,14 @@ public class UserServiceImpl implements UserService {
     public User createUser(CreateUserRequest createUserRequest) {
         User userToBeSaved = User.builder()
                 .name(createUserRequest.getName())
+                .tournamentScore(0L)
                 .level(1)
                 .coin(5_000L)
                 .build();
+
         return userDao.save(userToBeSaved);
     }
+
     @Override
     public User updateUserLevel(Long updateLevelRequest) {
         User userToBeUpdated = userDao.findById(updateLevelRequest)
@@ -41,6 +50,7 @@ public class UserServiceImpl implements UserService {
         userToBeUpdated.incrementLevel();
         if (isUserInTournament(userToBeUpdated)) {
             userToBeUpdated.incrementTournamentScore();
+            redisService.updateUserScore(userToBeUpdated.getId());
             return userDao.save(userToBeUpdated);
         }
         assignUserToAGroup(userToBeUpdated);
@@ -48,10 +58,11 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean isUserInTournament(User user) {
+        if (user.getTournament() == null) return false; //todo test this
         return userDao.usersInTournament(user.getTournament().getId()).size() >= 1;
     }
-    
-    private void assignUserToAGroup(User user) {
+
+    private void assignUserToAGroup(User user) { //todo??
         if (user.getLevel() < GroupLevelMapping.GROUP1.getLevelLimit()) {
             tournamentGroupService.findByGroupLevel(1).addUser(user);
         } else if (user.getLevel() < GroupLevelMapping.GROUP2.getLevelLimit()) {
@@ -71,6 +82,11 @@ public class UserServiceImpl implements UserService {
     public User payTournamentFee(User user, Long tournamentFee) {
         user.payTournamentFee(tournamentFee);
         return userDao.save(user);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userDao.findAll();
     }
 
 }
