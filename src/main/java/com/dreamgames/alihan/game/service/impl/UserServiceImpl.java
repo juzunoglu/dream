@@ -4,25 +4,25 @@ import com.dreamgames.alihan.game.entity.User;
 import com.dreamgames.alihan.game.entity.enumaration.GroupLevelMapping;
 import com.dreamgames.alihan.game.exception.UserNotFoundException;
 import com.dreamgames.alihan.game.model.CreateUserRequest;
+import com.dreamgames.alihan.game.redis.service.RedisService;
+import com.dreamgames.alihan.game.repository.TournamentDao;
 import com.dreamgames.alihan.game.repository.UserDao;
 import com.dreamgames.alihan.game.service.TournamentGroupService;
 import com.dreamgames.alihan.game.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
+import java.util.Set;
+
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
 
-    private final UserDao userDao;
+    @Autowired
+    private UserDao userDao;
 
     @Autowired
     private TournamentGroupService tournamentGroupService;
-
-    @Autowired
-    public UserServiceImpl(UserDao userDao) {
-        this.userDao = userDao;
-    }
 
     @Override
     public User createUser(CreateUserRequest createUserRequest) {
@@ -39,8 +39,16 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException("User is not found"));
         userToBeUpdated.addCoin(25L);
         userToBeUpdated.incrementLevel();
+        if (isUserInTournament(userToBeUpdated)) {
+            userToBeUpdated.incrementTournamentScore();
+            return userDao.save(userToBeUpdated);
+        }
         assignUserToAGroup(userToBeUpdated);
         return userDao.save(userToBeUpdated);
+    }
+
+    private boolean isUserInTournament(User user) {
+        return userDao.usersInTournament(user.getTournament().getId()).size() >= 1;
     }
     
     private void assignUserToAGroup(User user) {

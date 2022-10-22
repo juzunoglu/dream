@@ -62,6 +62,7 @@ public class TournamentServiceImpl implements TournamentService {
     }
 
     @Override
+    // To make this across the all nodes can use this -> TAM OLARAK 12::00 PM'de çalişti!
     @Scheduled(cron = "0 0 0-20 * * MON-SUN", zone = "UTC") // -> Between 00:00(UTC) AM and 20:00(UTC) PM, Monday through Sunday
     public void startScheduledTournament() {
         tournamentDao.getCurrentTournament()
@@ -111,11 +112,17 @@ public class TournamentServiceImpl implements TournamentService {
             throw new InsufficientCoinException("You must have at least 1000 coins to enter to the tournament");
         }
         // todo(User cannot enter a new tournament if he/she didn’t claim last entered tournament)
+        // todo when user is in a tournament and gets level updated the leaderboard should be changed!!!
         currentTournament.addUser(user);
         this.save(currentTournament);
         userService.payTournamentFee(user, TOURNAMENT_FEE);
         redisService.save(user);
         return redisService.getGroupLeaderBoard(user.getId().toString());
+    }
+
+    @Override
+    public List<LeaderBoardDTO> getGlobalLeaderBoard() {
+        return redisService.getGlobalLeaderBoard();
     }
 
     private String randomStringGenerator() {

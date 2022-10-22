@@ -2,6 +2,7 @@ package com.dreamgames.alihan.game.controller;
 
 import com.dreamgames.alihan.game.entity.User;
 import com.dreamgames.alihan.game.model.CreateUserRequest;
+import com.dreamgames.alihan.game.redis.service.RedisService;
 import com.dreamgames.alihan.game.service.UserService;
 import com.dreamgames.alihan.game.websocket.WebSocketService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,14 +19,12 @@ import javax.validation.Valid;
 @Slf4j
 public class UserController {
 
-    private final UserService userService;
-    private final WebSocketService webSocketService;
-
     @Autowired
-    public UserController(UserService userService, WebSocketService webSocketService) {
-        this.userService = userService;
-        this.webSocketService = webSocketService;
-    }
+    private UserService userService;
+    @Autowired
+    private RedisService redisService;
+    @Autowired
+    private WebSocketService webSocketService;
 
 
     @Operation(summary = "Creates user and returns unique user id, level, and coin")
@@ -44,6 +43,7 @@ public class UserController {
     @PutMapping(path = "/update/{userId}")
     public ResponseEntity<User> updateUserLevel(@PathVariable("userId") Long updateLevelRequest) {
         log.info("updateUserLevel is called for userId: {}", updateLevelRequest);
+        redisService.updateUserScore(updateLevelRequest);
         return new ResponseEntity<>(userService.updateUserLevel(updateLevelRequest), HttpStatus.ACCEPTED);
     }
 }

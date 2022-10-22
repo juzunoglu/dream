@@ -21,4 +21,6 @@ public interface TournamentService {
     boolean delete(Long id);
 
     List<LeaderBoardDTO> enterTournament(EnterTournamentRequest enterTournamentRequest);
+
+    List<LeaderBoardDTO> getGlobalLeaderBoard();
 }

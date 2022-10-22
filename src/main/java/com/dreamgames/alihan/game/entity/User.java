@@ -34,15 +34,10 @@ public class User {
     @Column(name = "level")
     private int level = 0;
 
-
-    @Column(name = "rank")
-    @Schema(hidden = true)
-    private Double rank;
-
     @Column(name = "tournament_score")
     @Schema(hidden = true)
     @JsonIgnore
-    private Long tournamentScore;
+    private Long tournamentScore = 0L;
 
     @Type(type = "org.hibernate.type.NumericBooleanType")
     @Column(name = "is_reward_claimed", nullable = false)
@@ -71,6 +66,9 @@ public class User {
 
     public void addCoin(Long coin) {
         this.setCoin(this.coin + coin);
+    }
+    public void incrementTournamentScore() {
+        this.setTournamentScore(++this.tournamentScore);
     }
 
     public void payTournamentFee(Long coin) {

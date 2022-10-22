@@ -8,6 +8,8 @@ import java.util.List;
 public interface RedisService {
     void save(User user);
 
+    void updateUserScore(Long userId);
+
     List<LeaderBoardDTO> getGroupLeaderBoard(String groupId);
 
     List<LeaderBoardDTO> getGlobalLeaderBoard();

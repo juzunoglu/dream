@@ -21,12 +21,8 @@ public class TournamentController {
 
     @Autowired
     private TournamentService tournamentService;
-
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private RedisService redisService;
 
     @Operation(summary = "Creates a tournament and returns its id for internal testing purposes")
     @PostMapping("/create")
@@ -39,7 +35,7 @@ public class TournamentController {
     @GetMapping("/getGlobalLeaderBoard")
     public ResponseEntity<List<LeaderBoardDTO>> getGlobalLeaderBoard() {
         log.info("getGlobalLeader is called");
-        return ResponseEntity.ok(redisService.getGlobalLeaderBoard());
+        return ResponseEntity.ok(tournamentService.getGlobalLeaderBoard());
     }
 
     @Operation(summary = "Enters current tournament and returns current group leaderboard")

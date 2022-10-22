@@ -30,14 +30,7 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public void save(User user) {
         Map<String, Double> groupMap = new HashMap<>();
-        // todo remove first condition?
-        if (user.getLevel() < 20) {
-            groupMap.put(user.getId().toString(), INITIAL_SCORE);
-            jedis.hset(user.getId().toString(), "id", user.getId().toString());
-            jedis.hset(user.getId().toString(), "username", user.getName());
-            jedis.zadd(user.getTournamentGroup().getName(), groupMap);
-        }
-        if (user.getLevel() > 20 && user.getLevel() <= 100) {
+        if (user.getLevel() >= 20 && user.getLevel() <= 100) {
             groupMap.put(user.getId().toString(), INITIAL_SCORE);
             jedis.hset(user.getId().toString(), "id", user.getId().toString());
             jedis.hset(user.getId().toString(), "username", user.getName());
@@ -59,6 +52,14 @@ public class RedisServiceImpl implements RedisService {
             jedis.zadd(user.getTournamentGroup().getName(), groupMap);
         }
         saveToGlobalLeaderboard(user);
+    }
+
+    @Override
+    public void updateUserScore(Long userId) {
+        User userFromRedis = getUserFromHashSet(userId.toString());
+        User user = userService.findUserById(userId);
+        jedis.zincrby(user.getTournamentGroup().getName(), 1D, userFromRedis.getId().toString());
+        jedis.zincrby(globalLeaderboard, 1D, userFromRedis.getId().toString());
     }
 
     private void saveToGlobalLeaderboard(User user) {

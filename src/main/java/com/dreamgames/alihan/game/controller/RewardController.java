@@ -14,9 +14,6 @@ import org.springframework.web.bind.annotation.*;
 public class RewardController {
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private RedisService redisService;
 
     @Autowired
