@@ -73,7 +73,6 @@ public class TournamentServiceImpl implements TournamentService {
     }
 
 //    @Override
-//    // TAM OLARAK 12::00 PM'de çalişti! sanırım saat başı çalişiyor bu şuanda
 //    @Scheduled(cron = "0 0 0-20 * * MON-SUN", zone = "UTC")
 //    // -> Between 00:00(UTC) AM and 20:00(UTC) PM, Monday through Sunday
 //    public void startScheduledTournament() {
@@ -97,12 +96,6 @@ public class TournamentServiceImpl implements TournamentService {
 //    }
 
     @Override
-    public Tournament getTournamentById(Long id) {
-        return tournamentDao.getTournamentById(id)
-                .orElseThrow(() -> new TournamentNotFound("No available tournament at the moment"));
-    }
-
-    @Override
     public Tournament getCurrentTournament() {
         return tournamentDao.getCurrentTournament()
                 .orElseThrow(() -> new TournamentNotFound("No available tournament at the moment"));
@@ -111,14 +104,6 @@ public class TournamentServiceImpl implements TournamentService {
     @Override
     public Tournament save(Tournament tournament) {
         return tournamentDao.save(tournament);
-    }
-
-    @Override
-    public boolean delete(Long id) {
-        Tournament tournament = tournamentDao.findById(id)
-                .orElseThrow(() -> new RuntimeException("Not found"));
-        tournamentDao.delete(tournament);
-        return true;
     }
 
     @Override

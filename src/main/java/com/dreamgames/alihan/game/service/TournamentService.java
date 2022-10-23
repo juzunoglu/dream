@@ -12,14 +12,9 @@ public interface TournamentService {
     Long startTournament(CreateTournamentRequest createTournamentRequest);
 
 //    void startScheduledTournament();
-    Tournament getTournamentById(Long id);
-
     Tournament getCurrentTournament();
 
     Tournament save(Tournament tournament);
-
-    boolean delete(Long id);
-
     List<LeaderBoardDTO> enterTournament(EnterTournamentRequest enterTournamentRequest);
 
     List<LeaderBoardDTO> getGlobalLeaderBoard();
