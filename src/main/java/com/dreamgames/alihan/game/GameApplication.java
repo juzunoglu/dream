@@ -11,11 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import java.util.List;
 
 @SpringBootApplication
 @EnableScheduling
+@EnableRedisRepositories
 @Slf4j
 @OpenAPIDefinition(info = @Info(title = "Dream Games API", description = "Short Demo API for Dream Games interview"))
 public class GameApplication implements CommandLineRunner {

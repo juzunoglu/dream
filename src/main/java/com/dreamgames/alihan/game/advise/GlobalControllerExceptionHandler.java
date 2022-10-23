@@ -1,9 +1,6 @@
 package com.dreamgames.alihan.game.advise;
 
-import com.dreamgames.alihan.game.exception.InsufficientCoinException;
-import com.dreamgames.alihan.game.exception.InsufficientLevelException;
-import com.dreamgames.alihan.game.exception.TournamentNotFound;
-import com.dreamgames.alihan.game.exception.UserNotFoundException;
+import com.dreamgames.alihan.game.exception.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,16 +62,40 @@ public class GlobalControllerExceptionHandler {
 
     @ExceptionHandler(value = {RuntimeException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleGenericException(RuntimeException exception) {
-        Map<String, String> errorMap = new HashMap<>();
-        errorMap.put("Exception is: ", exception.getMessage());
-        return errorMap;
+    public ResponseEntity<String> handleGenericException(RuntimeException exception) {
+        return ResponseEntity.badRequest().body("Something went wrong");
     }
 
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ResponseEntity<String> handleUserNotFound(UserNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(RewardNotFoundException.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public ResponseEntity<String> handleRewardNotFound(RewardNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(RewardAlreadyClaimedException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleRewardNotFound(RewardAlreadyClaimedException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RewardNotClaimedException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleRewardNotFound(RewardNotClaimedException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+
+
+    @ExceptionHandler(AlreadyInTournamentException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleAlreadyInTournamentException(AlreadyInTournamentException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(TournamentNotFound.class)

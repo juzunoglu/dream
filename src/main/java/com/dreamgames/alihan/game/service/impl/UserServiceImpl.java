@@ -1,13 +1,10 @@
 package com.dreamgames.alihan.game.service.impl;
 
-import com.dreamgames.alihan.game.entity.Reward;
 import com.dreamgames.alihan.game.entity.User;
 import com.dreamgames.alihan.game.entity.enumaration.GroupLevelMapping;
 import com.dreamgames.alihan.game.exception.UserNotFoundException;
 import com.dreamgames.alihan.game.model.CreateUserRequest;
 import com.dreamgames.alihan.game.redis.service.RedisService;
-import com.dreamgames.alihan.game.repository.RewardDao;
-import com.dreamgames.alihan.game.repository.TournamentDao;
 import com.dreamgames.alihan.game.repository.UserDao;
 import com.dreamgames.alihan.game.service.TournamentGroupService;
 import com.dreamgames.alihan.game.service.UserService;
@@ -15,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Transactional
@@ -50,7 +45,7 @@ public class UserServiceImpl implements UserService {
         userToBeUpdated.incrementLevel();
         if (isUserInTournament(userToBeUpdated)) {
             userToBeUpdated.incrementTournamentScore();
-            redisService.updateUserScore(userToBeUpdated.getId());
+            redisService.updateUserScore(userToBeUpdated);
             return userDao.save(userToBeUpdated);
         }
         assignUserToAGroup(userToBeUpdated);
@@ -85,8 +80,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean isUserAlreadyInTournament(User user) {
+        return user.getTournament() != null;
+    }
+
+    @Override
     public List<User> findAll() {
         return userDao.findAll();
+    }
+
+    @Override
+    public List<User> getAllUsersByTournamentId(Long tournamentId) {
+       return userDao.usersInTournament(tournamentId).stream().toList();
     }
 
 }

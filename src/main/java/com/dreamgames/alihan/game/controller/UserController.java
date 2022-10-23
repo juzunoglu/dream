@@ -1,8 +1,10 @@
 package com.dreamgames.alihan.game.controller;
 
+import com.dreamgames.alihan.game.entity.LeaderBoard;
 import com.dreamgames.alihan.game.entity.User;
 import com.dreamgames.alihan.game.model.CreateUserRequest;
 import com.dreamgames.alihan.game.redis.service.RedisService;
+import com.dreamgames.alihan.game.service.LeaderBoardService;
 import com.dreamgames.alihan.game.service.UserService;
 import com.dreamgames.alihan.game.websocket.WebSocketService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,10 +26,17 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private LeaderBoardService leaderBoardService;
+
     @Operation(summary = "Creates user and returns unique user id, level, and coin")
     @PostMapping(path = "/create")
     public ResponseEntity<User> createUser(@RequestBody @Valid CreateUserRequest createUserRequest) {
         log.info("createUser is called with: {}", createUserRequest);
+        leaderBoardService.save(LeaderBoard.builder().userId(1L)
+                .groupName("selam")
+                .rank(1D)
+                .tournamentId(2L).build());
         return new ResponseEntity<>(userService.createUser(createUserRequest), HttpStatus.CREATED);
     }
 

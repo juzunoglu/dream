@@ -11,7 +11,7 @@ public interface TournamentService {
 
     Long startTournament(CreateTournamentRequest createTournamentRequest);
 
-    void startScheduledTournament();
+//    void startScheduledTournament();
     Tournament getTournamentById(Long id);
 
     Tournament getCurrentTournament();

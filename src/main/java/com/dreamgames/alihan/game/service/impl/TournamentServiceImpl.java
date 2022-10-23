@@ -3,10 +3,7 @@ package com.dreamgames.alihan.game.service.impl;
 import com.dreamgames.alihan.game.entity.Reward;
 import com.dreamgames.alihan.game.entity.Tournament;
 import com.dreamgames.alihan.game.entity.User;
-import com.dreamgames.alihan.game.exception.InsufficientCoinException;
-import com.dreamgames.alihan.game.exception.InsufficientLevelException;
-import com.dreamgames.alihan.game.exception.RewardNotClaimedException;
-import com.dreamgames.alihan.game.exception.TournamentNotFound;
+import com.dreamgames.alihan.game.exception.*;
 import com.dreamgames.alihan.game.model.CreateTournamentRequest;
 import com.dreamgames.alihan.game.model.EnterTournamentRequest;
 import com.dreamgames.alihan.game.model.LeaderBoardDTO;
@@ -18,12 +15,10 @@ import com.dreamgames.alihan.game.service.TournamentService;
 import com.dreamgames.alihan.game.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -55,9 +50,13 @@ public class TournamentServiceImpl implements TournamentService {
 
     @Override
     public Long startTournament(CreateTournamentRequest createTournamentRequest) {
-        //todo what happens when a tournament is finished???? need to clear the tables ?
         tournamentDao.getCurrentTournament()
-                .ifPresent(tournament -> tournament.setState(DONE)); //soft delete the old tournament
+                .ifPresent(tournament -> {
+                    tournament.removeUsers(userService.getAllUsersByTournamentId(tournament.getId()));
+                    tournament.setState(DONE);
+                    tournamentDao.save(tournament); // todo do I need this line?
+//                    redisService.clearOldLeaderBoard(); // for history purposes, it would be good to store all the scores/leaderboards to the mysql db.
+                }); //soft delete the old tournament and clear the redis set
 
         Tournament newTournament = Tournament.builder()
                 .name(createTournamentRequest.getTournamentName())
@@ -69,25 +68,29 @@ public class TournamentServiceImpl implements TournamentService {
         return tournamentDao.save(newTournament).getId();
     }
 
-    @Override
-    // To make this across the all nodes can use this -> TAM OLARAK 12::00 PM'de çalişti! sanırım saat başı çalişiyor bu şuanda
-    @Scheduled(cron = "0 0 0-20 * * MON-SUN", zone = "UTC")
-    // -> Between 00:00(UTC) AM and 20:00(UTC) PM, Monday through Sunday
-    //todo what happens when a tournament is finished???? need to clear the tables ?
-    public void startScheduledTournament() {
-        tournamentDao.getCurrentTournament()
-                .ifPresent(tournament -> tournament.setState(DONE)); //soft delete the old tournament
-
-        Tournament newTournament = Tournament.builder()
-                .name(randomStringGenerator())
-                .createdAt(new Date())
-                .participants(Collections.emptyList())
-                .state(STARTED)
-                .build();
-
-        // todo turnuva basladiğinda otomatik olarak reward tablosu da başlaması lazım
-        tournamentDao.save(newTournament);
-    }
+//    @Override
+//    // TAM OLARAK 12::00 PM'de çalişti! sanırım saat başı çalişiyor bu şuanda
+//    @Scheduled(cron = "0 0 0-20 * * MON-SUN", zone = "UTC")
+//    // -> Between 00:00(UTC) AM and 20:00(UTC) PM, Monday through Sunday
+//    //todo what happens when a tournament is finished???? need to clear the tables ?
+//    public void startScheduledTournament() {
+//        tournamentDao.getCurrentTournament()
+//                .ifPresent(tournament -> {
+//                    tournament.setState(DONE);
+//                    tournament.removeUsers(tournament.getParticipants());
+//                    redisService.clearOldLeaderBoard();
+//                }); //soft delete the old tournament and clear the redis set
+//
+//
+//        Tournament newTournament = Tournament.builder()
+//                .name(randomStringGenerator())
+//                .createdAt(new Date())
+//                .participants(Collections.emptyList())
+//                .state(STARTED)
+//                .build();
+//
+//        tournamentDao.save(newTournament);
+//    }
 
     @Override
     public Tournament getTournamentById(Long id) {
@@ -117,6 +120,9 @@ public class TournamentServiceImpl implements TournamentService {
     @Override
     public List<LeaderBoardDTO> enterTournament(EnterTournamentRequest enterTournamentRequest) {
         User user = userService.findUserById(enterTournamentRequest.getUserId());
+        if (userService.isUserAlreadyInTournament(user)) {
+            throw new AlreadyInTournamentException("You're already in the tournament");
+        }
         Tournament currentTournament = this.getCurrentTournament();
         if (user.getLevel() < MINIMUM_LEVEL_REQUIRED_TO_ENTER) {
             throw new InsufficientLevelException("You have to be at least " + MINIMUM_LEVEL_REQUIRED_TO_ENTER + " level to enter to the tournament");

@@ -51,7 +51,7 @@ public class User {
     @JsonIgnore
     private TournamentGroup tournamentGroup;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "tournament_id")
     @Schema(hidden = true)
     @ToString.Exclude

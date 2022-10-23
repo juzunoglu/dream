@@ -4,12 +4,14 @@ package com.dreamgames.alihan.game.entity;
 import com.dreamgames.alihan.game.entity.enumaration.TournamentState;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.Hibernate;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -30,11 +32,12 @@ public class Tournament {
     private String name;
 
     @Column(name = "participants")
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "tournament")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "tournament", cascade = CascadeType.ALL)
     private List<User> participants = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "tournament")
+    @ToString.Exclude
     private List<Reward> rewardList = new ArrayList<>();
 
 
@@ -56,9 +59,21 @@ public class Tournament {
         reward.setTournament(this);
     }
 
-    public void removeUser(User user) {
-        participants.clear();
-        user.setTournament(null);
+    public void removeUsers(List<User> userList) {
+        this.participants.removeAll(userList);
+        userList.forEach(user -> user.setTournament(null));
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Tournament that = (Tournament) o;
+        return id != null && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

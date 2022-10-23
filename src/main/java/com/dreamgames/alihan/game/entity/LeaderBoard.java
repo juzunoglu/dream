@@ -2,29 +2,22 @@ package com.dreamgames.alihan.game.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.springframework.data.redis.core.RedisHash;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
-@Entity
+@RedisHash("leaderboard")
 @Getter
 @Setter
-@ToString
-@AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "leaderboard")
-public class LeaderBoard  {
+@AllArgsConstructor
+@Builder
+public class LeaderBoard implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
-    @JsonIgnore
     private Long id;
-
-    private Long position;
-
-    private Double score;
-
-    @OneToOne(mappedBy = "leaderBoard")
-    private TournamentGroup tournamentGroup;
-
+    private Long tournamentId;
+    private Long userId;
+    private String groupName;
+    private double rank;
 }

@@ -18,9 +18,8 @@ public class RewardController {
 
     @Autowired
     private RewardService rewardService;
-
     @Operation(summary = "Claims reward of a specific tournament and returns updated progress data")
-    @PutMapping(name = "/{userId}/{tournamentId}")
+    @PutMapping(name = "/claim")
     public ResponseEntity<User> claimReward(ClaimRewardRequest claimRewardRequest) {
         return new ResponseEntity<>(rewardService.claimReward(claimRewardRequest.getUserId(), claimRewardRequest.getTournamentId()), HttpStatus.OK);
     }

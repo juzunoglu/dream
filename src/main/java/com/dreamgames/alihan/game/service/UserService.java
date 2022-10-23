@@ -15,6 +15,10 @@ public interface UserService {
 
     User payTournamentFee(User user, Long tournamentFee);
 
+    boolean isUserAlreadyInTournament(User user);
+
     List<User> findAll();
+
+    List<User> getAllUsersByTournamentId(Long tournamentId);
 
 }

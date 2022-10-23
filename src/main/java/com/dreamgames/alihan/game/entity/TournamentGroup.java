@@ -38,11 +38,6 @@ public class TournamentGroup {
     @ToString.Exclude
     private List<User> teamParticipant = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "leaderboard_id")
-    @JsonIgnore
-    private LeaderBoard leaderBoard;
-
     public void addUser(User user) {
         teamParticipant.add(user);
         user.setTournamentGroup(this);

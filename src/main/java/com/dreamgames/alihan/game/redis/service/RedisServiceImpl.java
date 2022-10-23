@@ -1,14 +1,13 @@
 package com.dreamgames.alihan.game.redis.service;
 
 import com.dreamgames.alihan.game.entity.User;
-import com.dreamgames.alihan.game.exception.UserNotFoundException;
 import com.dreamgames.alihan.game.model.LeaderBoardDTO;
-import com.dreamgames.alihan.game.repository.UserDao;
-import com.dreamgames.alihan.game.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Tuple;
+import redis.clients.jedis.args.FlushMode;
 
 import javax.transaction.Transactional;
 import java.util.*;
@@ -16,6 +15,7 @@ import java.util.*;
 
 @Service
 @Transactional
+@Slf4j
 public class RedisServiceImpl implements RedisService {
 
     private static final String globalLeaderboard = "globalRank";
@@ -25,9 +25,6 @@ public class RedisServiceImpl implements RedisService {
 
     @Autowired
     private Jedis jedis;
-
-    @Autowired
-    private UserDao userDao;
 
     @Override
     public void save(User user) {
@@ -57,10 +54,8 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public void updateUserScore(Long userId) { //todo remove userDao? unncessary dependency?
-        User userFromRedis = getUserFromHashSet(userId.toString());
-        User user = userDao.findById(userId)
-                        .orElseThrow(() -> new UserNotFoundException("User is not found"));
+    public void updateUserScore(User user) { //todo remove userDao? unncessary dependency?
+        User userFromRedis = getUserFromHashSet(user.getId().toString());
         jedis.zincrby(user.getTournamentGroup().getName(), 1D, userFromRedis.getId().toString());
         jedis.zincrby(globalLeaderboard, 1D, userFromRedis.getId().toString());
     }
@@ -92,7 +87,6 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public Long getUserRank(String groupName, Long userId) {
-        User user = getUserFromHashSet(userId.toString());
         // zrevrank retrieves the user position at the sorted set
         Long rank = jedis.zrevrank(groupName, userId.toString());
         // Adding one to the position because it starts at 0
@@ -118,6 +112,11 @@ public class RedisServiceImpl implements RedisService {
             leaderboardList.add(leaderBoardDTO);
         }
         return leaderboardList;
+    }
+
+    @Override
+    public void clearOldLeaderBoard() {
+        jedis.flushDB(FlushMode.ASYNC);
     }
 
     private User getUserFromHashSet(String userId) {
