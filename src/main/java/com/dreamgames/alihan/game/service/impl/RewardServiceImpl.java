@@ -2,6 +2,7 @@ package com.dreamgames.alihan.game.service.impl;
 
 import com.dreamgames.alihan.game.entity.Reward;
 import com.dreamgames.alihan.game.entity.User;
+import com.dreamgames.alihan.game.exception.RewardAlreadyClaimedException;
 import com.dreamgames.alihan.game.exception.RewardNotFoundException;
 import com.dreamgames.alihan.game.redis.service.RedisService;
 import com.dreamgames.alihan.game.repository.RewardDao;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+
+import static com.dreamgames.alihan.game.redis.service.RedisServiceImpl.REDIS_HASH_KEY;
 
 @Service
 @Slf4j
@@ -41,9 +44,12 @@ public class RewardServiceImpl implements RewardService {
     @Override
     public User claimReward(Long userId, Long tournamentId) {
        User user = userService.findUserById(userId);
-       int userRank = redisService.getUserRank(user.getTournamentGroup().getName(), user.getId()).intValue();
+       int userRank = redisService.getUserRank(REDIS_HASH_KEY.concat(user.getTournamentGroup().getName()), user.getId()).intValue();
        Reward userReward = rewardDao.getRewardByUserAndTournamentId(userId, tournamentId)
                .orElseThrow(() -> new RewardNotFoundException("Reward is not found"));
+       if (userReward.isRewardClaimed()) {
+           throw new RewardAlreadyClaimedException("You have already claimed your rewards");
+       }
        userReward.setRewardClaimed(true);
        switch (userRank) {
            case 1 -> user.addCoin(10_000L);

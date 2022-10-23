@@ -8,4 +8,5 @@ public record LeaderBoardDTO(
         String username,
         double tournamentScore,
         long position) {
+
 }

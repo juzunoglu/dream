@@ -1,23 +1,26 @@
 package com.dreamgames.alihan.game.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @RedisHash("leaderboard")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 @Builder
 public class LeaderBoard implements Serializable {
 
+    @Id
     private Long id;
+
+    @Indexed
     private Long tournamentId;
+    @Indexed
     private Long userId;
     private String groupName;
-    private double rank;
+
+    @Indexed
+    private Long position;
 }

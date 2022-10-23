@@ -80,7 +80,7 @@ public class GlobalControllerExceptionHandler {
 
     @ExceptionHandler(RewardAlreadyClaimedException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ResponseEntity<String> handleRewardNotFound(RewardAlreadyClaimedException ex) {
+    public ResponseEntity<String> handleRewardAlreadyClaimedException(RewardAlreadyClaimedException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
@@ -90,7 +90,11 @@ public class GlobalControllerExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-
+    @ExceptionHandler(PositionDoesNotExistException.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public ResponseEntity<String> handlePositionDoesNotExist(PositionDoesNotExistException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 
     @ExceptionHandler(AlreadyInTournamentException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)

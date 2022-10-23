@@ -10,6 +10,7 @@ import com.dreamgames.alihan.game.model.LeaderBoardDTO;
 import com.dreamgames.alihan.game.redis.service.RedisService;
 import com.dreamgames.alihan.game.repository.RewardDao;
 import com.dreamgames.alihan.game.repository.TournamentDao;
+import com.dreamgames.alihan.game.service.LeaderBoardService;
 import com.dreamgames.alihan.game.service.RewardService;
 import com.dreamgames.alihan.game.service.TournamentService;
 import com.dreamgames.alihan.game.service.UserService;
@@ -25,6 +26,7 @@ import java.util.Random;
 
 import static com.dreamgames.alihan.game.entity.enumaration.TournamentState.DONE;
 import static com.dreamgames.alihan.game.entity.enumaration.TournamentState.STARTED;
+import static com.dreamgames.alihan.game.redis.service.RedisServiceImpl.REDIS_HASH_KEY;
 
 @Service
 @Slf4j
@@ -42,6 +44,8 @@ public class TournamentServiceImpl implements TournamentService {
     private RewardDao rewardDao;
 
     @Autowired
+    private LeaderBoardService leaderBoardService;
+    @Autowired
     private RewardService rewardService;
     @Autowired
     private UserService userService;
@@ -53,9 +57,9 @@ public class TournamentServiceImpl implements TournamentService {
         tournamentDao.getCurrentTournament()
                 .ifPresent(tournament -> {
                     tournament.removeUsers(userService.getAllUsersByTournamentId(tournament.getId()));
+                    redisService.clearOldLeaderBoard();
                     tournament.setState(DONE);
-                    tournamentDao.save(tournament); // todo do I need this line?
-//                    redisService.clearOldLeaderBoard(); // for history purposes, it would be good to store all the scores/leaderboards to the mysql db.
+                    tournamentDao.save(tournament);
                 }); //soft delete the old tournament and clear the redis set
 
         Tournament newTournament = Tournament.builder()
@@ -72,13 +76,13 @@ public class TournamentServiceImpl implements TournamentService {
 //    // TAM OLARAK 12::00 PM'de çalişti! sanırım saat başı çalişiyor bu şuanda
 //    @Scheduled(cron = "0 0 0-20 * * MON-SUN", zone = "UTC")
 //    // -> Between 00:00(UTC) AM and 20:00(UTC) PM, Monday through Sunday
-//    //todo what happens when a tournament is finished???? need to clear the tables ?
 //    public void startScheduledTournament() {
 //        tournamentDao.getCurrentTournament()
 //                .ifPresent(tournament -> {
-//                    tournament.setState(DONE);
 //                    tournament.removeUsers(tournament.getParticipants());
 //                    redisService.clearOldLeaderBoard();
+//                    tournament.setState(DONE);
+//                    tournamentDao.save(tournament);
 //                }); //soft delete the old tournament and clear the redis set
 //
 //
@@ -136,12 +140,15 @@ public class TournamentServiceImpl implements TournamentService {
         }
         currentTournament.addUser(user);
         tournamentDao.save(currentTournament);
+
         userService.payTournamentFee(user, TOURNAMENT_FEE);
+
         rewardService.save(Reward.builder()
                 .user(user)
                 .tournament(currentTournament).build());
+
         redisService.save(user);
-        return redisService.getGroupLeaderBoard(user.getTournamentGroup().getName());
+        return redisService.getGroupLeaderBoard(REDIS_HASH_KEY.concat(user.getTournamentGroup().getName()));
     }
 
     @Override
