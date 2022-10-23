@@ -17,5 +17,4 @@ to work with across all the instance nodes.
 https://betterprogramming.pub/building-a-websocket-server-in-a-microservice-architecture-50c6c6432e2b
 
 # Database Design
-
-![](../../OneDrive/Masaüstü/uml-diagram.png)
+![db-schema](https://user-images.githubusercontent.com/38230713/197417480-07b0e57c-cdfe-4787-9d95-2f68058a79fa.png)
