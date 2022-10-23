@@ -52,6 +52,7 @@ public class TournamentServiceImpl implements TournamentService {
     private UserService userService;
     @Autowired
     private RedisService redisService;
+
     @Override
     public Long startTournament(CreateTournamentRequest createTournamentRequest) {
         //todo what happens when a tournament is finished???? need to clear the tables ?
@@ -84,6 +85,7 @@ public class TournamentServiceImpl implements TournamentService {
                 .state(STARTED)
                 .build();
 
+        // todo turnuva basladiğinda otomatik olarak reward tablosu da başlaması lazım
         tournamentDao.save(newTournament);
     }
 
@@ -115,23 +117,23 @@ public class TournamentServiceImpl implements TournamentService {
     @Override
     public List<LeaderBoardDTO> enterTournament(EnterTournamentRequest enterTournamentRequest) {
         User user = userService.findUserById(enterTournamentRequest.getUserId());
-        Tournament currentTournament = this.getTournamentById(enterTournamentRequest.getTournamentId());
+        Tournament currentTournament = this.getCurrentTournament();
         if (user.getLevel() < MINIMUM_LEVEL_REQUIRED_TO_ENTER) {
             throw new InsufficientLevelException("You have to be at least " + MINIMUM_LEVEL_REQUIRED_TO_ENTER + " level to enter to the tournament");
         }
         if (user.getCoin() < TOURNAMENT_FEE) {
             throw new InsufficientCoinException("You must have at least " + TOURNAMENT_FEE + " coins to enter to the tournament");
         }
+
+        if (!rewardService.isRewardClaimed(user.getId())) {
+            throw new RewardNotClaimedException("You have to claim the reward from the past tournament");
+        }
         currentTournament.addUser(user);
-        this.save(currentTournament);
+        tournamentDao.save(currentTournament);
         userService.payTournamentFee(user, TOURNAMENT_FEE);
         rewardService.save(Reward.builder()
                 .user(user)
                 .tournament(currentTournament).build());
-
-//        if (!rewardService.isRewardClaimed(user.getId())) { //todo
-//            throw new RewardNotClaimedException("You have to claim the reward from the past tournament");
-//        }
         redisService.save(user);
         return redisService.getGroupLeaderBoard(user.getTournamentGroup().getName());
     }

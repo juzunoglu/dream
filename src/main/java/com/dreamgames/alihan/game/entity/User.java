@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.List;
@@ -31,6 +30,7 @@ public class User {
 
     @JsonIgnore
     @OneToMany(mappedBy = "user")
+    @ToString.Exclude
     private List<Reward> rewardList;
 
     @Column(name = "coin")
@@ -57,8 +57,6 @@ public class User {
     @ToString.Exclude
     @JsonIgnore
     private Tournament tournament;
-
-
     public void incrementLevel() {
         this.setLevel(++this.level);
     }

@@ -3,7 +3,6 @@ package com.dreamgames.alihan.game.service.impl;
 import com.dreamgames.alihan.game.entity.Reward;
 import com.dreamgames.alihan.game.entity.User;
 import com.dreamgames.alihan.game.exception.RewardNotFoundException;
-import com.dreamgames.alihan.game.model.LeaderBoardDTO;
 import com.dreamgames.alihan.game.redis.service.RedisService;
 import com.dreamgames.alihan.game.repository.RewardDao;
 import com.dreamgames.alihan.game.service.RewardService;
@@ -12,8 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 @Slf4j
+@Transactional
 public class RewardServiceImpl implements RewardService {
 
     @Autowired
@@ -28,9 +30,11 @@ public class RewardServiceImpl implements RewardService {
         return rewardDao.save(reward);
     }
     @Override
-    public boolean isRewardClaimed(Long userId, Long tournamentId) {
-        Reward reward = rewardDao.getRewardByUserId(userId)
-                .orElseThrow(() -> new RewardNotFoundException("Reward is not found"));
+    public boolean isRewardClaimed(Long userId) {
+        Reward reward = rewardDao.getRewardByUserId(userId).orElse(null);
+        if (reward == null) { // if the reward is null, it's the first time the user is entering the tournament!
+            return true;
+        }
         return reward.isRewardClaimed();
     }
 

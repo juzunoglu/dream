@@ -7,6 +7,6 @@ public interface RewardService {
 
     Reward save(Reward reward);
 
-    boolean isRewardClaimed(Long userId, Long tournamentId);
+    boolean isRewardClaimed(Long userId);
     User claimReward(Long userId, Long tournamentId);
 }
