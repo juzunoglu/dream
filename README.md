@@ -44,6 +44,7 @@ The DB schemas could definitely use some improvements, as I'm not happy with all
 complexity, but given the time, this was the best I could do.
 There could be definitely some improvements on the queries as they seem rather complex and could
 potentially slow the application down.
+Team solution does not really scale. Should've found a better way to assign users to a group based on their levels.
 Could not write unit-tests.
 
 # Further Possible Implementations and Why there is a websocket class

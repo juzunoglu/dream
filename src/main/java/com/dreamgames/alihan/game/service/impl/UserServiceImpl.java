@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean isUserInTournament(User user) {
-        if (user.getTournament() == null) return false; //todo test this
+        if (user.getTournament() == null) return false;
         return userDao.usersInTournament(user.getTournament().getId()).size() >= 1;
     }
 
@@ -64,6 +64,12 @@ public class UserServiceImpl implements UserService {
             tournamentGroupService.findByGroupLevel(2).addUser(user);
         } else if (user.getLevel() < GroupLevelMapping.GROUP3.getLevelLimit()) {
             tournamentGroupService.findByGroupLevel(3).addUser(user);
+        } else if (user.getLevel() < GroupLevelMapping.GROUP4.getLevelLimit()) {
+            tournamentGroupService.findByGroupLevel(4).addUser(user);
+        } else if (user.getLevel() < GroupLevelMapping.GROUP5.getLevelLimit()) {
+            tournamentGroupService.findByGroupLevel(5).addUser(user);
+        } else if (user.getLevel() < GroupLevelMapping.GROUP6.getLevelLimit()) {
+            tournamentGroupService.findByGroupLevel(6).addUser(user);
         }
     }
 
@@ -74,9 +80,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User payTournamentFee(User user, Long tournamentFee) {
+    public void payTournamentFee(User user, Long tournamentFee) {
         user.payTournamentFee(tournamentFee);
-        return userDao.save(user);
+        userDao.save(user);
     }
 
     @Override

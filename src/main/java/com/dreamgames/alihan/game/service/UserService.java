@@ -13,7 +13,7 @@ public interface UserService {
 
     User findUserById(Long userId);
 
-    User payTournamentFee(User user, Long tournamentFee);
+    void payTournamentFee(User user, Long tournamentFee);
 
     boolean isUserAlreadyInTournament(User user);
 
