@@ -1,9 +1,8 @@
-package com.dreamgames.alihan.game.service.impl;
+package com.dreamgames.alihan.game.redis.service;
 
-import com.dreamgames.alihan.game.entity.LeaderBoard;
 import com.dreamgames.alihan.game.exception.PositionDoesNotExistException;
-import com.dreamgames.alihan.game.repository.LeaderBoardDao;
-import com.dreamgames.alihan.game.service.LeaderBoardService;
+import com.dreamgames.alihan.game.redis.entity.LeaderBoard;
+import com.dreamgames.alihan.game.redis.repository.LeaderBoardDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

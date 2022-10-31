@@ -1,9 +1,8 @@
 package com.dreamgames.alihan.game.redis.service;
 
-import com.dreamgames.alihan.game.entity.LeaderBoard;
 import com.dreamgames.alihan.game.entity.User;
 import com.dreamgames.alihan.game.model.LeaderBoardDTO;
-import com.dreamgames.alihan.game.service.LeaderBoardService;
+import com.dreamgames.alihan.game.redis.entity.LeaderBoard;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -27,7 +26,6 @@ public class RedisServiceImpl implements RedisService {
     private static final String USER_GLOBAL_RANK = "user::globalRank";
 
     public static final String REDIS_HASH_KEY = "user::";
-    private static Map<String, Double> userMap = new HashMap<>();
 
     private static final Double INITIAL_SCORE = 0.0;
 
@@ -49,7 +47,7 @@ public class RedisServiceImpl implements RedisService {
             groupMap.put(user.getId().toString(), INITIAL_SCORE);
             jedis.hset(REDIS_HASH_KEY.concat(user.getId().toString()), "id", user.getId().toString());
             jedis.hset(REDIS_HASH_KEY.concat(user.getId().toString()), "username", user.getName());
-            jedis.zadd(REDIS_HASH_KEY.concat(user.getId().toString()).concat(user.getTournamentGroup().getName()), groupMap);
+            jedis.zadd(REDIS_HASH_KEY.concat(user.getTournamentGroup().getName()), groupMap);
         } else if (user.getLevel() > 200 && user.getLevel() <= 300) {
             groupMap.put(user.getId().toString(), INITIAL_SCORE);
             jedis.hset(REDIS_HASH_KEY.concat(user.getId().toString()), "id", user.getId().toString());
@@ -77,13 +75,15 @@ public class RedisServiceImpl implements RedisService {
         jedis.zincrby(REDIS_HASH_KEY.concat(user.getTournamentGroup().getName()), 1D, userFromRedis.getId().toString());
         jedis.zincrby(USER_GLOBAL_RANK, 1D, userFromRedis.getId().toString());
 
-        List<LeaderBoardDTO> leaderBoardDTOS = this.getGlobalLeaderBoard();
-        leaderBoardDTOS.forEach(leaderBoardDTO -> leaderBoardService.update(leaderBoardDTO.userId(), leaderBoardDTO.position()));
+        // for each update, update the leaderboard hash to calculate the user ranks automatically in their group
+        List<LeaderBoardDTO> groupLeaderBoards = this.getGroupLeaderBoard(REDIS_HASH_KEY.concat(user.getTournamentGroup().getName()));
+        groupLeaderBoards.forEach(groupLeaderBoard -> leaderBoardService.update(groupLeaderBoard.userId(), groupLeaderBoard.position()));
     }
 
     private void saveToGlobalLeaderboard(User user) {
-        userMap.put(user.getId().toString(), INITIAL_SCORE);
-        jedis.zadd(USER_GLOBAL_RANK, userMap);
+        Map<String, Double> globalMap = new HashMap<>();
+        globalMap.put(user.getId().toString(), INITIAL_SCORE);
+        jedis.zadd(USER_GLOBAL_RANK, globalMap);
     }
 
     @Override

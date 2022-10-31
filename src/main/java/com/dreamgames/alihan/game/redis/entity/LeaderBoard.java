@@ -1,4 +1,4 @@
-package com.dreamgames.alihan.game.entity;
+package com.dreamgames.alihan.game.redis.entity;
 
 import lombok.*;
 import org.springframework.data.redis.core.RedisHash;

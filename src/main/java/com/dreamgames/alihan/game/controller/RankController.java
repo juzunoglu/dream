@@ -1,6 +1,6 @@
 package com.dreamgames.alihan.game.controller;
 
-import com.dreamgames.alihan.game.service.LeaderBoardService;
+import com.dreamgames.alihan.game.redis.service.LeaderBoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

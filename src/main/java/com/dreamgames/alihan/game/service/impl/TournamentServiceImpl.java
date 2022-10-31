@@ -7,10 +7,9 @@ import com.dreamgames.alihan.game.exception.*;
 import com.dreamgames.alihan.game.model.CreateTournamentRequest;
 import com.dreamgames.alihan.game.model.EnterTournamentRequest;
 import com.dreamgames.alihan.game.model.LeaderBoardDTO;
+import com.dreamgames.alihan.game.redis.service.LeaderBoardService;
 import com.dreamgames.alihan.game.redis.service.RedisService;
-import com.dreamgames.alihan.game.repository.RewardDao;
 import com.dreamgames.alihan.game.repository.TournamentDao;
-import com.dreamgames.alihan.game.service.LeaderBoardService;
 import com.dreamgames.alihan.game.service.RewardService;
 import com.dreamgames.alihan.game.service.TournamentService;
 import com.dreamgames.alihan.game.service.UserService;
@@ -39,9 +38,6 @@ public class TournamentServiceImpl implements TournamentService {
 
     @Autowired
     private TournamentDao tournamentDao;
-
-    @Autowired
-    private RewardDao rewardDao;
 
     @Autowired
     private LeaderBoardService leaderBoardService;
@@ -91,7 +87,7 @@ public class TournamentServiceImpl implements TournamentService {
 //                .participants(Collections.emptyList())
 //                .state(STARTED)
 //                .build();
-//
+//        log.info("The time is now {}", dateFormat.format(new Date()));
 //        tournamentDao.save(newTournament);
 //    }
 

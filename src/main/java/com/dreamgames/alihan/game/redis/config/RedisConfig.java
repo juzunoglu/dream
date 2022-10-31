@@ -1,4 +1,4 @@
-package com.dreamgames.alihan.game.redis;
+package com.dreamgames.alihan.game.redis.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

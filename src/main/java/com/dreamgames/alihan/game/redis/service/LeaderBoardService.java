@@ -1,6 +1,6 @@
-package com.dreamgames.alihan.game.service;
+package com.dreamgames.alihan.game.redis.service;
 
-import com.dreamgames.alihan.game.entity.LeaderBoard;
+import com.dreamgames.alihan.game.redis.entity.LeaderBoard;
 
 public interface LeaderBoardService {
     LeaderBoard save(LeaderBoard leaderBoard);

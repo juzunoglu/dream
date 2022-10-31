@@ -50,7 +50,7 @@ public class GameApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) {
 		if (tournamentGroupService.findAll().size() < 1) {
-			for (int i = 1; i < 20; i++) {
+			for (int i = 1; i <= 20; i++) {
 				TournamentGroup tournamentGroup = TournamentGroup.builder()
 						.name("Group".concat(Integer.toString(i)))
 						.level(i)
